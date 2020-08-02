@@ -1,0 +1,4 @@
+/error.log
+/.env
+/node_modules/
+.idea
