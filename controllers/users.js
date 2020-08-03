@@ -35,7 +35,7 @@ module.exports.getUserById = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.createUser = (err, req, res) => {
+module.exports.createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10)
     .then((hash) => user.create({
       name: req.body.name,
@@ -46,7 +46,7 @@ module.exports.createUser = (err, req, res) => {
     }))
     // eslint-disable-next-line no-shadow
     .then((user) => res.send({ data: user.toJSON() }))
-    .catch(err);
+    .catch(next);
 };
 
 module.exports.updateUserProfile = (req, res, next) => {

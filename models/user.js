@@ -67,5 +67,5 @@ userSchema.methods.toJSON = function () {
   return obj;
 };
 
-userSchema.plugin(uniqueValidator);
+userSchema.plugin(uniqueValidator, { message: 'Error, expected {EMAIL} to be unique.' });
 module.exports = mongoose.model('user', userSchema);

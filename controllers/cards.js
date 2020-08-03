@@ -1,6 +1,7 @@
 const card = require('../models/card');
 const NotFoundError = require('../midllewares/errors/errorHandler');
 const BadRequest = require('../midllewares/errors/errorHandler');
+const Forbidden = require('../midllewares/errors/errorHandler');
 
 module.exports.getCards = (req, res, next) => {
   card.find({})
@@ -33,12 +34,15 @@ module.exports.deleteCardById = (req, res, next) => {
   if (!req.params) {
     throw new BadRequest('Ни одно из вводимых полей не может быть пустым');
   }
-  // eslint-disable-next-line no-underscore-dangle
-  card.findOneAndDelete({ _id: `${id}`, owner: req.user._id })
-    // , ((err, result) => {
+  // eslint-disable-next-line no-underscore-dangle,consistent-return
+  card.findOneAndDelete({ _id: id, owner: req.user._id })
     .then((result) => {
       if ((!result) || (result.length === 0)) {
-        throw new BadRequest(`Картинка ${id} не существует или уже удалена, либо у вас нет прав для ее удаления`);
+        throw new BadRequest(`Картинка ${id} не существует`);
+      }
+      // eslint-disable-next-line no-underscore-dangle
+      if (req.user._id !== result.owner._id) {
+        throw new Forbidden('Нет прав для удаления картинки');
       }
       res.send({ message: 'Картинка успешно удалена' });
     })

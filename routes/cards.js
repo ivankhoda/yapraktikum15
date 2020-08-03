@@ -16,9 +16,6 @@ routerToCards.get('/cards',
 
 routerToCards.post('/cards',
   celebrate({
-    params: Joi.object().keys({
-      id: Joi.string().length(24),
-    }),
     headers: Joi.object().keys({
       authorization: Joi.string().required(),
     }).unknown(true),
@@ -33,7 +30,7 @@ routerToCards.post('/cards',
 routerToCards.delete('/cards/:id',
   celebrate({
     params: Joi.object().keys({
-      id: Joi.string().length(24),
+      id: Joi.string().hex(),
     }),
     headers: Joi.object().keys({
       authorization: Joi.string().required(),
@@ -45,7 +42,7 @@ routerToCards.delete('/cards/:id',
 routerToCards.put('/cards/:cardId/likes',
   celebrate({
     params: Joi.object().keys({
-      id: Joi.string().length(24),
+      id: Joi.string().hex(),
     }),
   }),
 
@@ -54,7 +51,7 @@ routerToCards.put('/cards/:cardId/likes',
 routerToCards.delete('/cards/:cardId/likes',
   celebrate({
     params: Joi.object().keys({
-      id: Joi.string().length(24),
+      id: Joi.string().hex(),
     }),
   }),
 

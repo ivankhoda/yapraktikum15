@@ -36,8 +36,8 @@ app.get('/crash-test', () => {
 app.post('/signin',
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().required(),
-      password: Joi.string().required(),
+      email: Joi.string().email().required(),
+      password: Joi.string().min(8).required(),
     }),
   }),
 
@@ -48,9 +48,9 @@ app.post('/signup',
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
       about: Joi.string().required().min(2),
-      email: Joi.string().required(),
+      email: Joi.string().email().required(),
       avatar: Joi.string().regex(/(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg|gif|png|svg))/).required(),
-      password: Joi.string().required(),
+      password: Joi.string().min(8).required(),
     }),
   }),
 
@@ -63,9 +63,8 @@ app.use(errorLogger);
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  res.status(err.statusCode).send({ message: err.message });
-  next();
+app.use('/', () => {
+  throw new NotFoundError('Запрашиваемый ресурс не найден');
 });
 
 app.use((err, req, res, next) => {
@@ -79,10 +78,6 @@ app.use((err, req, res, next) => {
     });
 
   next();
-});
-
-app.use('/', () => {
-  throw new NotFoundError('Запрашиваемый ресурс не найден');
 });
 
 app.listen(PORT, () => {

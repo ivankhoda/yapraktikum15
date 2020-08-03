@@ -20,7 +20,7 @@ routerToUsers.get('/users',
 routerToUsers.get('/users/:id',
   celebrate({
     params: Joi.object().keys({
-      id: Joi.string().length(24),
+      id: Joi.string().hex(),
     }),
     headers: Joi.object().keys({
       authorization: Joi.string().required(),
@@ -30,15 +30,12 @@ routerToUsers.get('/users/:id',
 
 routerToUsers.patch('/users/me',
   celebrate({
-    params: Joi.object().keys({
-      id: Joi.string().length(24),
-    }),
     headers: Joi.object().keys({
       authorization: Joi.string().required(),
     }).unknown(true),
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
-      about: Joi.string().required().min(2),
+      about: Joi.string().required().min(2).max(30),
     }),
   }),
 
@@ -46,9 +43,6 @@ routerToUsers.patch('/users/me',
 
 routerToUsers.patch('/users/me/avatar',
   celebrate({
-    params: Joi.object().keys({
-      id: Joi.string().length(24),
-    }),
     headers: Joi.object().keys({
       authorization: Joi.string().required(),
     }).unknown(true),
