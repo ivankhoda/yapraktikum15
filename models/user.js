@@ -3,7 +3,7 @@ const valid = require('validator');
 const bcrypt = require('bcryptjs');
 
 const uniqueValidator = require('mongoose-unique-validator');
-const BadRequest = require('../midllewares/errors/errorHandler');
+const BadRequest = require('../midllewares/errors/BadRequest');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -67,5 +67,5 @@ userSchema.methods.toJSON = function () {
   return obj;
 };
 
-userSchema.plugin(uniqueValidator, { message: 'Error, expected {EMAIL} to be unique.' });
+userSchema.plugin(uniqueValidator);
 module.exports = mongoose.model('user', userSchema);

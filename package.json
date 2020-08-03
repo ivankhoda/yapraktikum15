@@ -14,13 +14,7 @@
   "keywords": [],
   "author": "Ivan Khoda",
   "license": "ISC",
-  "bugs": {
-    "url": ""
-  },
-  "browserslist": [
-    "last 2 versions",
-    "ios >= 8"
-  ],
+  "bugs": {},
   "homepage": "",
   "dependencies": {
     "bcryptjs": "^2.4.3",

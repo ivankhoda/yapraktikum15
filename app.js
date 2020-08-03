@@ -14,7 +14,7 @@ const routeToCards = require('./routes/cards');
 const routeToUsers = require('./routes/users');
 const { login, createUser } = require('./controllers/users');
 const { auth } = require('./midllewares/auth');
-const NotFoundError = require('./midllewares/errors/errorHandler');
+const NotFoundError = require('./midllewares/errors/NotFoundError');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -47,7 +47,7 @@ app.post('/signup',
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
-      about: Joi.string().required().min(2),
+      about: Joi.string().required().min(2).max(30),
       email: Joi.string().email().required(),
       avatar: Joi.string().regex(/(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg|gif|png|svg))/).required(),
       password: Joi.string().min(8).required(),

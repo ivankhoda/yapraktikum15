@@ -1,10 +1,10 @@
-const card = require('../models/card');
-const NotFoundError = require('../midllewares/errors/errorHandler');
-const BadRequest = require('../midllewares/errors/errorHandler');
-const Forbidden = require('../midllewares/errors/errorHandler');
+const Card = require('../models/card');
+const NotFoundError = require('../midllewares/errors/NotFoundError');
+const BadRequest = require('../midllewares/errors/BadRequest');
+const Forbidden = require('../midllewares/errors/Forbidden');
 
 module.exports.getCards = (req, res, next) => {
-  card.find({})
+  Card.find({})
     .then(
       (cards) => {
         if ((!cards) || (cards.length === 0)) {
@@ -23,9 +23,14 @@ module.exports.createCard = (req, res, next) => {
   if (!req.body) {
     throw new BadRequest('Ни одно из вводимых полей не может быть пустым');
   }
-  card.create({ name, link, owner: userId })
+  Card.create({ name, link, owner: userId })
     // eslint-disable-next-line no-shadow
-    .then((card) => res.send({ data: card }))
+    .then(
+      (card) => { res.send({ data: card }); },
+      (err) => {
+        throw new BadRequest(`${err}`);
+      },
+    )
     .catch(next);
 };
 
@@ -35,22 +40,33 @@ module.exports.deleteCardById = (req, res, next) => {
     throw new BadRequest('Ни одно из вводимых полей не может быть пустым');
   }
   // eslint-disable-next-line no-underscore-dangle,consistent-return
-  card.findOneAndDelete({ _id: id, owner: req.user._id })
+  Card.findOne({ _id: id })
+
     .then((result) => {
-      if ((!result) || (result.length === 0)) {
-        throw new BadRequest(`Картинка ${id} не существует`);
-      }
+      // eslint-disable-next-line brace-style
+      if ((!result) || (result.length === 0)) { throw new BadRequest(`Картинка ${id} не существует`); }
       // eslint-disable-next-line no-underscore-dangle
-      if (req.user._id !== result.owner._id) {
+      else if (req.user._id === result.owner._id.toString()) {
+        Card.deleteOne({ _id: id })
+          // eslint-disable-next-line no-shadow,no-unused-vars
+          .then((result) => {
+            res.send({ message: 'Картинка удалена' });
+          }, (err) => {
+            // eslint-disable-next-line no-console
+            console.log(err);
+          })
+          .catch(next);
+        // eslint-disable-next-line no-underscore-dangle
+      } else if (req.user._id !== (result.owner._id.toString())) {
         throw new Forbidden('Нет прав для удаления картинки');
       }
-      res.send({ message: 'Картинка успешно удалена' });
     })
+
     .catch(next);
 };
 
 module.exports.likeCard = (req, res, next) => {
-  card.findByIdAndUpdate(
+  Card.findByIdAndUpdate(
     { _id: req.params.cardId },
     // eslint-disable-next-line no-underscore-dangle
     { $addToSet: { likes: req.user._id } },
@@ -63,7 +79,7 @@ module.exports.likeCard = (req, res, next) => {
 };
 
 module.exports.dislikeCard = (req, res, next) => {
-  card.findByIdAndUpdate(
+  Card.findByIdAndUpdate(
     { _id: req.params.cardId },
     // eslint-disable-next-line no-underscore-dangle
     { $pull: { likes: req.user._id } },

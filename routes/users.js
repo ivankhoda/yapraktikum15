@@ -20,7 +20,7 @@ routerToUsers.get('/users',
 routerToUsers.get('/users/:id',
   celebrate({
     params: Joi.object().keys({
-      id: Joi.string().hex(),
+      id: Joi.string().hex().length(24),
     }),
     headers: Joi.object().keys({
       authorization: Joi.string().required(),

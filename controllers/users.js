@@ -1,8 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const user = require('../models/user');
-const NotFoundError = require('../midllewares/errors/errorHandler');
-const BadRequest = require('../midllewares/errors/errorHandler');
+const NotFoundError = require('../midllewares/errors/NotFoundError');
+const BadRequest = require('../midllewares/errors/BadRequest');
+const NotUnique = require('../midllewares/errors/NotUnique');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -45,7 +46,13 @@ module.exports.createUser = (req, res, next) => {
       password: hash,
     }))
     // eslint-disable-next-line no-shadow
-    .then((user) => res.send({ data: user.toJSON() }))
+    .then((user) => {
+      res.send({ data: user.toJSON() });
+    }, (err) => {
+      if (err.errors.email && err.errors.email.kind === 'unique') {
+        throw new NotUnique(`Пользователь с  email ${err.errors.email.value} уже зарегистрирован`);
+      }
+    })
     .catch(next);
 };
 
