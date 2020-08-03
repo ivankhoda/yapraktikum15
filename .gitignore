@@ -1,0 +1,8 @@
+/error.log
+/request.log
+/.env
+/node_modules/
+.idea
+.gitignore
+error.log
+request.log
