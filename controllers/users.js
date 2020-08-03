@@ -52,6 +52,7 @@ module.exports.createUser = (req, res, next) => {
       if (err.errors.email && err.errors.email.kind === 'unique') {
         throw new NotUnique(`Пользователь с  email ${err.errors.email.value} уже зарегистрирован`);
       }
+      throw new BadRequest(`${err}`);
     })
     .catch(next);
 };

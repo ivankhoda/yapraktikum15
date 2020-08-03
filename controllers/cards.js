@@ -44,12 +44,11 @@ module.exports.deleteCardById = (req, res, next) => {
 
     .then((result) => {
       // eslint-disable-next-line brace-style
-      if ((!result) || (result.length === 0)) { throw new BadRequest(`Картинка ${id} не существует`); }
+      if ((!result) || (result.length === 0)) { throw new NotFoundError(`Картинка ${id} не существует`); }
       // eslint-disable-next-line no-underscore-dangle
       else if (req.user._id === result.owner._id.toString()) {
         Card.deleteOne({ _id: id })
-          // eslint-disable-next-line no-shadow,no-unused-vars
-          .then((result) => {
+          .then(() => {
             res.send({ message: 'Картинка удалена' });
           }, (err) => {
             // eslint-disable-next-line no-console
@@ -73,6 +72,9 @@ module.exports.likeCard = (req, res, next) => {
     { new: true },
   )
     .then((obj) => {
+      if (!obj) {
+        throw new NotFoundError('Картинка не найдена');
+      }
       res.send(obj);
     })
     .catch(next);
@@ -86,6 +88,9 @@ module.exports.dislikeCard = (req, res, next) => {
     { new: true },
   )
     .then((obj) => {
+      if (!obj) {
+        throw new NotFoundError('Картинка не найдена');
+      }
       res.send(obj);
     })
     .catch(next);

@@ -21,7 +21,7 @@ routerToCards.post('/cards',
     }).unknown(true),
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
-      link: Joi.string().uri().required().min(2),
+      link: Joi.string().required().min(2).regex(/(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg|gif|png|svg))/),
     }),
   }),
 
@@ -42,7 +42,7 @@ routerToCards.delete('/cards/:id',
 routerToCards.put('/cards/:cardId/likes',
   celebrate({
     params: Joi.object().keys({
-      cardId: Joi.string().hex().length(24),
+      cardId: Joi.string().hex().required().length(24),
     }),
   }),
 
@@ -51,7 +51,7 @@ routerToCards.put('/cards/:cardId/likes',
 routerToCards.delete('/cards/:cardId/likes',
   celebrate({
     params: Joi.object().keys({
-      cardId: Joi.string().hex().length(24),
+      cardId: Joi.string().hex().required().length(24),
     }),
   }),
 

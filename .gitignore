@@ -4,3 +4,5 @@
 /node_modules/
 .idea
 .gitignore
+error.log
+request.log
